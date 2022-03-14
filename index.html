@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Flower predict</title>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+</head> 
+<body>
+    <form action="/images/" method="post" enctype="multipart/form-data" id="image_form">
+        <p>
+            <input id="file" type="file" name="file" onchange="previewFile(this);" required>
+        </p>
+        <img id="previewImg" src="/static/transparent.png" alt="Placeholder">
+        <p>
+            <input type="submit" value="Submit">
+        </p>
+    </form>
+    <div id="result"></div>
+</body>
+
+
+<!-- call api post -->
+<script>
+    $( "#image_form" ).submit(function( event ) {
+        event.preventDefault();
+        let url = "http://127.0.0.1:8000/images/";
+        let formData = new FormData();         
+        formData.append("file", file.files[0]);
+
+        fetch(url, {
+            method: "POST", 
+            body: formData
+        }).then(data => {
+            data.json().then(text=>{
+                const res = document.getElementById('result');
+                res.textContent = text['name'] +" with " + text['score'] + " percent confident";
+            })
+            .catch("patser error");
+        }).catch("post error");
+
+        
+    });
+</script>
+
+<!-- Review anh -->
+<script>
+    function previewFile(input){
+        var file = $("input[type=file]").get(0).files[0];
+ 
+        if(file){
+            var reader = new FileReader();
+ 
+            reader.onload = function(){
+                $("#previewImg").attr("src", reader.result);
+            }
+ 
+            reader.readAsDataURL(file);
+        }
+    };
+
+
+</script>
+
+
+</html>
